@@ -1,0 +1,33 @@
+{
+    "name": "buildfu",
+    "description": "A collection of CLI web build tools",
+    "repository": "git://github.com/Munter/buildfu.git",
+    "version": "0.0.1",
+    "keywords": ["web", "build", "build system", "single page", "web application", "static html", "html", "css", "javascript", "jsdom"],
+    "maintainers": [
+        {
+            "name": "Peter Müller",
+            "email": "munter@fumle.dk"
+        }
+    ],
+    "dependencies": {
+        "assetgraph": "latest",
+        "optimist": "latest",
+        "underscore": "latest",
+        "seq": "latest",
+        "temp": "latest",
+        "bufferjs": "latest",
+        "uglify-js": "latest",
+        "colors": "latest"
+    },
+    "engines": {
+        "node": ">=0.4.8"
+    },
+    "directories": {
+        "lib": "./lib",
+        "bin": "./bin"
+    },
+    "publishConfig": {
+        "registry": "http://registry.npmjs.org/"
+    }
+}

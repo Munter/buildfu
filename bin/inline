@@ -1,0 +1,121 @@
+#!/usr/bin/env node
+
+var optimist = require('optimist'),
+    commandLineOptions = optimist
+        .usage('$0 [options] http://yoursite.com')
+        .options('i', {
+            alias: 'images',
+            describe: 'Keep images external. Keeps files size small, but more requests',
+            type: 'boolean',
+            default: false
+        })
+        .options('f', {
+            alias: 'fonts',
+            describe: 'Keep fonts external. Keeps files size small, but more requests',
+            type: 'boolean',
+            default: false
+        })
+        .options('n', {
+            alias: 'nocompress',
+            describe: 'Prettifies HTML, CSS and Javascript for easier debugging',
+            type: 'boolean',
+            default: false
+        })
+        .options('v', {
+            alias: 'verbose',
+            describe: 'Echo on STDERR the progress of inlining',
+            type: 'boolean',
+            default: false
+        })
+        .options('h', {
+            alias: 'help',
+            describe: 'Show this help',
+            type: 'boolean',
+            default: false
+        })
+        .wrap(72)
+        .argv;
+
+if (!commandLineOptions._[0] || commandLineOptions.help) {
+    optimist.showHelp();
+    process.exit(1)
+}
+
+var AssetGraph = require('assetgraph'),
+    query = AssetGraph.query,
+    urlTools = require('assetgraph/lib/util/urlTools'),
+    colors = require('colors');
+
+require('../lib/registerTransforms');
+
+new AssetGraph({root: commandLineOptions._[0]})
+    .on('afterTransform', function (transform, elapsedTime) {
+        if(commandLineOptions.verbose){
+            console.error(((elapsedTime / 1000).toFixed(3) + " secs: " + transform.name).green);
+        }
+    })
+    .on('error', function (err) {
+        console.error(err.message.red);
+        console.error(err.stack);
+    })
+
+    // Set up the graph and populate it
+    .registerRequireJsConfig()
+    .loadAssets(commandLineOptions._[0])
+    .populate({
+        followRelations: {
+            type: [
+                'HtmlImage',
+                'HtmlStyle',
+                'HtmlScript',
+                'HtmlRequireJsMain',
+                'HtmlConditionalComment',
+                'HtmlShortcutIcon',
+                'HtmlAppleTouchStartupImage',
+                'CssImport',
+                'CssImage',
+                'CssAlphaImageLoader',
+                'CssBehavior',
+                'CssFontFaceSrc',
+                'JavascriptAmdDefine',
+                'JavascriptAmdRequire',
+                'JavascriptCommonJsRequire'
+            ]
+        }
+    })
+
+    .if(!commandLineOptions.images)
+        // Do the author a favor and compress pngs properly also
+        .optimizePngs()
+        .inlineRelations({
+            type: ['CssImage', 'HtmlImage']
+        })
+    .endif()
+
+    .if(!commandLineOptions.fonts)
+        .inlineRelations({
+            type: ['CssFontFaceSrc']
+        })
+    .endif()
+
+    .if(!commandLineOptions.nocompress)
+        .compressJavaScript({type: 'JavaScript'}, 'uglifyJs')
+        .minifyAssets({
+            type: ['Html', 'JavaScript', 'Css']
+        })
+    .endif()
+
+    // convert @import to link tags
+    .convertCssImportsToHtmlStyles()
+
+    // inline style and script
+    .inlineRelations({
+        type: ['HtmlStyle', 'HtmlScript']
+    })
+
+    // Output to stdout
+    .writeAssetsToStdout({
+        type: 'Html',
+        url: /^http/ // FIXME: This assumes to much about the url
+    })
+    .run();
