@@ -61,6 +61,11 @@ new AssetGraph({
         console.error(err.message.red);
         console.error(err.stack);
     })
+    .on('addAsset', function(asset) {
+        if (asset._url) {
+            //console.warn(asset._url.yellow);
+        }
+    })
 
     // Set up the graph and populate it
     .registerRequireJsConfig()
