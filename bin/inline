@@ -71,6 +71,7 @@ new AssetGraph({
     .registerRequireJsConfig()
     .loadAssets(commandLineOptions._[0])
     .populate({
+        concurrency: 8,
         followRelations: {
             type: [
                 'HtmlImage',
