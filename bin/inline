@@ -15,6 +15,12 @@ var optimist = require('optimist'),
             type: 'boolean',
             default: false
         })
+        .options('b', {
+            alias: 'behavior',
+            describe: 'Keep CSS behaviors external. Keeps files size small, but more requests',
+            type: 'boolean',
+            default: false
+        })
         .options('n', {
             alias: 'nocompress',
             describe: 'Prettifies HTML, CSS and Javascript for easier debugging',
@@ -104,6 +110,12 @@ new AssetGraph({
     .if(!commandLineOptions.fonts)
         .inlineRelations({
             type: ['CssFontFaceSrc']
+        })
+    .endif()
+
+    .if(!commandLineOptions.behavior)
+        .inlineRelations({
+            type: ['CssBehavior']
         })
     .endif()
 
