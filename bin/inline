@@ -103,7 +103,7 @@ new AssetGraph({
         // Do the author a favor and compress pngs properly also
         .optimizePngs()
         .inlineRelations({
-            type: ['CssImage', 'HtmlImage']
+            type: ['CssImage', 'HtmlImage', 'HtmlShortcutIcon', 'HtmlAppleTouchStartupImage']
         })
     .endif()
 
