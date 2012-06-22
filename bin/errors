@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+
+var optimist = require('optimist'),
+    commandLineOptions = optimist
+        .usage('$0 [options] http://yoursite.com')
+        .options('r', {
+            alias: 'recursive',
+            describe: 'Follows links around the site to check other urls than the single one supplied',
+            type: 'boolean',
+            default: false
+        })
+        .options('p', {
+            alias: 'parents',
+            describe: 'Include parent directories up until the domain',
+            type: 'boolean',
+            default: false
+        })
+        .options('h', {
+            alias: 'help',
+            describe: 'Show this help',
+            type: 'boolean',
+            default: false
+        })
+        .wrap(72)
+        .argv
+    domain = commandLineOptions._[0],
+    errors = [];
+
+if (!commandLineOptions._[0] || commandLineOptions.help) {
+    optimist.showHelp();
+    process.exit(1)
+}
+
+var AssetGraph = require('assetgraph'),
+    query = AssetGraph.query,
+    urlTools = require('assetgraph/lib/util/urlTools'),
+    colors = require('colors');
+
+require('../lib/registerTransforms');
+
+new AssetGraph({
+        root: commandLineOptions._[0],
+        defaultResolver: 'http'
+    })
+    .on('error', function (err) {
+        errors.push(err);
+    })
+    .on('addAsset', function(asset) {
+        if (asset._url) {
+            console.log(asset._url.green);
+        }
+    })
+
+    // Set up the graph and populate it
+    .registerRequireJsConfig()
+    .loadAssets(commandLineOptions._[0])
+
+    .populate({
+        followRelations: query.not({
+            type: 'HtmlAnchor'
+        })
+    })
+
+    // LessCss.js
+    .compileLessToCss({type: 'Less'})
+    .populate({from: {type: 'Css'}})
+
+    .run(function () {
+        if (errors.length > 0) {
+            errors.forEach(function (err) {
+                console.error(err.message.red)
+            });
+            process.exit(1);
+        }
+    });
