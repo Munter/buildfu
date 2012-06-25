@@ -11,7 +11,7 @@
         }
     ],
     "dependencies": {
-        "assetgraph-buildfu": "latest",
+        "assetgraph": "latest",
         "optimist": "latest",
         "underscore": "latest",
         "seq": "latest",
