@@ -132,10 +132,14 @@ new AssetGraph({
     .inlineRelations({
         type: ['HtmlStyle', 'HtmlScript']
     })
+    .moveAssets({type: 'Html', isInline: false}, function (asset) {
+        return "file:///foo.html";
+    })
 
     // Output to stdout
     .writeAssetsToStdout({
         type: 'Html',
-        url: /^http/ // FIXME: This assumes to much about the url
+        url: "file:///foo.html"
     })
+
     .run();
