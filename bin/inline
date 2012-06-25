@@ -55,8 +55,7 @@ var AssetGraph = require('assetgraph'),
 require('../lib/registerTransforms');
 
 new AssetGraph({
-        root: commandLineOptions._[0],
-        defaultResolver: 'http'
+        root: commandLineOptions._[0]
     })
     .on('afterTransform', function (transform, elapsedTime) {
         if(commandLineOptions.verbose){
