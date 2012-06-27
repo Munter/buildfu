@@ -77,7 +77,6 @@ new AssetGraph({
     .registerRequireJsConfig()
     .loadAssets(url)
     .populate({
-        concurrency: 8,
         followRelations: {
             type: [
                 'HtmlImage',
