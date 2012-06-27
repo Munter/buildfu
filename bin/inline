@@ -45,7 +45,7 @@ var optimist = require('optimist'),
 
 if (!url || commandLineOptions.help) {
     optimist.showHelp();
-    process.exit(1)
+    process.exit(1);
 }
 
 var AssetGraph = require('assetgraph'),
@@ -59,7 +59,7 @@ new AssetGraph({
         root: url
     })
     .on('afterTransform', function (transform, elapsedTime) {
-        if(commandLineOptions.verbose){
+        if (commandLineOptions.verbose) {
             console.error(((elapsedTime / 1000).toFixed(3) + " secs: " + transform.name).green);
         }
     })
@@ -67,7 +67,7 @@ new AssetGraph({
         console.error(err.message.red);
         //console.error(err.stack);
     })
-    .on('addAsset', function(asset) {
+    .on('addAsset', function (asset) {
         if (asset._url) {
             //console.warn(asset._url.yellow);
         }
@@ -113,17 +113,15 @@ new AssetGraph({
     .convertCssImportsToHtmlStyles()
 
     // inline style and script
-    .inlineRelations({
-        type: ['HtmlStyle', 'HtmlScript']
-    })
+    .inlineRelations({ type: ['HtmlStyle', 'HtmlScript'] })
     .moveAssets({type: 'Html', isInline: false}, function (asset) {
-        return "file:///foo.html";
-    })
+            return "file:///foo.html";
+        })
 
     // Output to stdout
     .writeAssetsToStdout({
-        type: 'Html',
-        url: "file:///foo.html"
-    })
+            type: 'Html',
+            url: "file:///foo.html"
+        })
 
     .run();
