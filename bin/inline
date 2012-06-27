@@ -40,9 +40,10 @@ var optimist = require('optimist'),
             default: false
         })
         .wrap(72)
-        .argv;
+        .argv,
+    url = commandLineOptions._[0];
 
-if (!commandLineOptions._[0] || commandLineOptions.help) {
+if (!url || commandLineOptions.help) {
     optimist.showHelp();
     process.exit(1)
 }
@@ -55,7 +56,7 @@ var AssetGraph = require('assetgraph'),
 require('../lib/registerTransforms');
 
 new AssetGraph({
-        root: commandLineOptions._[0]
+        root: url
     })
     .on('afterTransform', function (transform, elapsedTime) {
         if(commandLineOptions.verbose){
@@ -74,7 +75,7 @@ new AssetGraph({
 
     // Set up the graph and populate it
     .registerRequireJsConfig()
-    .loadAssets(commandLineOptions._[0])
+    .loadAssets(url)
     .populate({
         concurrency: 8,
         followRelations: {
