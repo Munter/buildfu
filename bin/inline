@@ -78,23 +78,7 @@ new AssetGraph({
     .loadAssets(url)
     .populate({
         followRelations: {
-            type: [
-                'HtmlImage',
-                'HtmlStyle',
-                'HtmlScript',
-                'HtmlRequireJsMain',
-                'HtmlConditionalComment',
-                'HtmlShortcutIcon',
-                'HtmlAppleTouchStartupImage',
-                'CssImport',
-                'CssImage',
-                'CssAlphaImageLoader',
-                'CssBehavior',
-                'CssFontFaceSrc',
-                'JavascriptAmdDefine',
-                'JavascriptAmdRequire',
-                'JavascriptCommonJsRequire'
-            ]
+            type: query.not(['HtmlAnchor'])
         }
     })
 
