@@ -103,7 +103,7 @@ new AssetGraph({
     .endif()
 
     .if(!commandLineOptions.nocompress)
-        .compressJavaScript({type: 'JavaScript'}, 'uglifyJs', {inline_script: true})
+        .compressJavaScript({type: 'JavaScript'}, 'uglifyJs')
         .minifyAssets({
             type: ['Html', 'JavaScript', 'Css']
         })
