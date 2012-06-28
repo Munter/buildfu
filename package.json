@@ -12,6 +12,7 @@
     ],
     "dependencies": {
         "assetgraph": "latest",
+        "histogram": ">=0.1.0",
         "optimist": "latest",
         "underscore": "latest",
         "seq": "latest",
