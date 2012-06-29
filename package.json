@@ -13,15 +13,13 @@
     "dependencies": {
         "assetgraph": "latest",
         "optimist": "latest",
+        "passerror": "latest",
         "underscore": "latest",
         "seq": "latest",
         "temp": "latest",
         "bufferjs": "latest",
         "uglify-js": "latest",
         "colors": "latest"
-    },
-    "optionalDependencies": {
-        "histogram": ">=0.1.1"
     },
     "engines": {
         "node": ">=0.4.8"
