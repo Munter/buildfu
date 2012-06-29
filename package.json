@@ -2,7 +2,7 @@
     "name": "buildfu",
     "description": "A collection of CLI web build tools",
     "repository": "git://github.com/Munter/buildfu.git",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "keywords": ["web", "build", "build system", "single page", "web application", "static html", "html", "css", "javascript", "jsdom"],
     "maintainers": [
         {
