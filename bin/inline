@@ -50,7 +50,6 @@ if (!url || commandLineOptions.help) {
 
 var AssetGraph = require('assetgraph'),
     query = AssetGraph.query,
-    urlTools = require('assetgraph/lib/util/urlTools'),
     colors = require('colors');
 
 require('../lib/registerTransforms');
