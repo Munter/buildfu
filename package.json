@@ -12,6 +12,7 @@
     ],
     "dependencies": {
         "assetgraph": "latest",
+        "histogram": "latest",
         "optimist": "latest",
         "passerror": "latest",
         "underscore": "latest",
