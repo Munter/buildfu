@@ -28,13 +28,13 @@ var optimist = require('optimist'),
             default: false
         })
         .wrap(72)
-        .argv
+        .argv,
     url = require('url').parse(commandLineOptions._[0]),
     errors = [];
 
 if (!url.href || commandLineOptions.help) {
     optimist.showHelp();
-    process.exit(1)
+    process.exit(1);
 }
 
 var AssetGraph = require('assetgraph'),
@@ -68,7 +68,7 @@ new AssetGraph({
         }
         errors.push(err);
     })
-    .on('addAsset', function(asset) {
+    .on('addAsset', function (asset) {
         if (commandLineOptions.verbose && asset._url) {
             console.log('\u2717 '.green + asset._url);
         }
@@ -90,7 +90,7 @@ new AssetGraph({
         .populate({
             followRelations: query.not({
                 type: 'HtmlAnchor',
-                href: function(url) {
+                href: function (url) {
                     if (/:\/\//.test(url)) {
                         // Relative url showing protocol. That means we're outside the domain
                         return true;
