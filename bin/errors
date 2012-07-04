@@ -64,13 +64,13 @@ new AssetGraph({
     })
     .on('error', function (err) {
         if (commandLineOptions.verbose) {
-            console.log('\u2714 '.red + err.message);
+            console.log('\u2717 '.red + err.message);
         }
         errors.push(err);
     })
     .on('addAsset', function (asset) {
         if (commandLineOptions.verbose && asset._url) {
-            console.log('\u2717 '.green + asset._url);
+            console.log('\u2714 '.green + asset._url);
         }
     })
 
