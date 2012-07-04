@@ -15,6 +15,12 @@ var optimist = require('optimist'),
             type: 'boolean',
             default: false
         })
+        .options('v', {
+            alias: 'verbose',
+            describe: 'Output files as they are resolved',
+            type: 'boolean',
+            default: false
+        })
         .options('h', {
             alias: 'help',
             describe: 'Show this help',
@@ -23,43 +29,81 @@ var optimist = require('optimist'),
         })
         .wrap(72)
         .argv
-    domain = commandLineOptions._[0],
+    url = require('url').parse(commandLineOptions._[0]),
     errors = [];
 
-if (!commandLineOptions._[0] || commandLineOptions.help) {
+if (!url.href || commandLineOptions.help) {
     optimist.showHelp();
     process.exit(1)
 }
 
 var AssetGraph = require('assetgraph'),
     query = AssetGraph.query,
-    urlTools = require('assetgraph/lib/util/urlTools'),
-    colors = require('colors');
+    colors = require('colors'),
+    path = require('path'),
+    follow;
+/*
+{
+    protocol: 'http:',
+    slashes: true,
+    auth: 'munter:123456',
+    host: 'www.fumle.dk',
+    hostname: 'www.fumle.dk',
+    href: 'http://munter:123456@www.fumle.dk/path/to/file.extension',
+    pathname: '/path/to/file.extension',
+    path: '/path/to/file.extension'
+}
+*/
 
 require('../lib/registerTransforms');
 
+
 new AssetGraph({
-        root: commandLineOptions._[0],
+        root: url.href,
         defaultResolver: 'http'
     })
     .on('error', function (err) {
+        if (commandLineOptions.verbose) {
+            console.log('\u2714 '.red + err.message);
+        }
         errors.push(err);
     })
     .on('addAsset', function(asset) {
-        if (asset._url) {
-            console.log(asset._url.green);
+        if (commandLineOptions.verbose && asset._url) {
+            console.log('\u2717 '.green + asset._url);
         }
     })
 
     // Set up the graph and populate it
     .registerRequireJsConfig()
-    .loadAssets(commandLineOptions._[0])
+    .loadAssets(url.href)
 
+    // First graph the page
     .populate({
         followRelations: query.not({
             type: 'HtmlAnchor'
         })
     })
+
+    // Then decent into lower levels
+    .if(commandLineOptions.recursive)
+        .populate({
+            followRelations: query.not({
+                type: 'HtmlAnchor',
+                href: function(url) {
+                    if (/:\/\//.test(url)) {
+                        // Relative url showing protocol. That means we're outside the domain
+                        return true;
+                    }
+                    if (/^\.\.\//.test(url)) {
+                        return !commandLineOptions.parents;
+                    }
+                    return false;
+                }
+            })
+        })
+    .endif()
+
 
     // LessCss.js
     .compileLessToCss({type: 'Less'})
@@ -67,6 +111,7 @@ new AssetGraph({
 
     .run(function () {
         if (errors.length > 0) {
+            console.error('Errors:');
             errors.forEach(function (err) {
                 console.error(err.message.red)
             });
